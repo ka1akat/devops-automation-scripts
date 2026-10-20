@@ -1,0 +1,2 @@
+* * * * * root /usr/sbin/logrotate /etc/logrotate.d/simple-api
+

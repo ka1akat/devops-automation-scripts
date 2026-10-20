@@ -1,0 +1,21 @@
+[Unit]
+Description=Simple Flask API
+After=network.target
+
+[Service]
+User=vagrant
+WorkingDirectory=/opt/simple-api
+ExecStart=/opt/simple-api/venv/bin/python /opt/simple-api/app.py
+Environment=PYTHONUNBUFFERED=1
+
+StandardOutput=append:/home/logs/app.log
+StandardError=append:/home/logs/app.log
+
+Restart=always
+RestartSec=3
+
+MemoryMax=200M
+CPUQuota=20%
+
+[Install]
+WantedBy=multi-user.target

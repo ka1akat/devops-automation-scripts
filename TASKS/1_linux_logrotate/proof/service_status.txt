@@ -1,0 +1,11 @@
+● simple-api.service - Simple Flask API
+     Loaded: loaded (/etc/systemd/system/simple-api.service; enabled; preset: enabled)
+     Active: active (running) since Tue 2026-10-20 16:40:01 UTC; 41min ago
+   Main PID: 5448 (python)
+      Tasks: 1 (limit: 4392)
+     Memory: 19.3M (max: 200.0M available: 180.6M peak: 21.3M)
+        CPU: 11.322s
+     CGroup: /system.slice/simple-api.service
+             └─5448 /opt/simple-api/venv/bin/python /opt/simple-api/app.py
+
+Oct 20 16:40:01 vagrant systemd[1]: Started simple-api.service - Simple Flask API.

@@ -1,0 +1,10 @@
+/home/logs/app.log {
+    size 1M
+    rotate 2
+    copytruncate
+    missingok
+    notifempty
+    postrotate
+        date '+%Y-%m-%d %H:%M:%S' >> /home/log_rotates.log
+    endscript
+}
