@@ -1,0 +1,11 @@
+/var/log/time-api/*.log {
+    size 500K
+    rotate 3
+    copytruncate
+    missingok
+    notifempty
+    sharedscripts
+    postrotate
+        date '+%Y-%m-%d %H:%M:%S' >> /var/log/time-api-rotations.log
+    endscript
+}

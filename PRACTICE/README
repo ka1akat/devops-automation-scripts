@@ -1,0 +1,108 @@
+# Practice 1A — Time API: split logs, log rotation & cron
+
+A self-made practice task: a harder variation of [Task 1](../../TASKS/1_linux_logrotate) to practise the same skills without step-by-step instructions.
+
+## Task
+
+1. Create a simple API `time-api` on port 8080: `GET /time` returns the current time, `GET /error` returns an error.
+2. Create `/var/log/time-api`. Normal output (stdout) must go to `access.log`, errors (stderr) to a separate `error.log`.
+3. Each log file: size limit **500 KB**, keep **4 files** in total.
+4. Save the time of each rotation to `/var/log/time-api-rotations.log`.
+5. Logrotate must check the files **every 2 minutes**.
+6. Limit the app to **150 MB** RAM and **30%** CPU; restart it automatically on crash.
+
+**Constraint:** the application code must not be changed — everything is done at the infrastructure level.
+
+## What is different from Task 1
+
+- **Two log files instead of one:** stdout and stderr are split into `access.log` and `error.log`.
+- Logs live in the standard Linux location `/var/log`.
+- Different limits: 500 KB / 4 files, cron every 2 minutes, 150 MB / 30% CPU.
+- A real issue was found and fixed during testing (see *Troubleshooting*).
+
+## Solution overview
+
+```
+time-api (Flask)
+  ├─ stdout ─► systemd ─► /var/log/time-api/access.log
+  └─ stderr ─► systemd ─► /var/log/time-api/error.log
+                                  │
+          cron (*/2) runs logrotate with its own state file
+                                  ▼
+          access.log → .1 → .2 → .3 → deleted   (same for error.log)
+                                  │ postrotate (once per run)
+                                  ▼
+                  /var/log/time-api-rotations.log
+```
+
+## Repository structure
+
+```
+1A_time_api_logrotate/
+├── app/            # app.py (writes to stdout/stderr only) + requirements.txt
+├── systemd/        # time-api.service — run, split logs, limits, restart
+├── logrotate/      # time-api — 500K, rotate 3, copytruncate, sharedscripts
+├── cron/           # time-api-logrotate — every 2 minutes, own state file
+└── proof/          # real output from the running system
+```
+
+## Key decisions
+
+- **`StandardOutput` / `StandardError`** in the systemd unit send the two streams to two different files; the app itself knows nothing about files.
+- **`PYTHONUNBUFFERED=1`** — while testing I noticed that `INFO` lines did not appear in the file: Python buffers stdout when it is redirected to a file. This environment variable fixes it without touching the code.
+- **`copytruncate`** — the app keeps the log file open and cannot reopen it, so logrotate copies the file and truncates the original.
+- **`rotate 3`** — 3 archives + the current file = 4 files.
+- **`sharedscripts`** — with two log files, `postrotate` runs once per rotation instead of once per file, so each rotation is logged exactly once.
+- **The rotation log is outside `/var/log/time-api/`**, otherwise the `*.log` pattern would rotate it too.
+- **Own logrotate state file (`-s`)** — see below.
+
+## Troubleshooting: logrotate race condition
+
+**Symptom:** `access.log` grew to 616 KB (limit 500 KB), but cron did not rotate it.
+
+**Investigation:** `grep CRON /var/log/syslog` showed that cron *did* start the job every 2 minutes, but on even minutes it ran **at the same time** as the logrotate job from Task 1 (which runs every minute), and one of them failed with `No MTA installed, discarding output` (= the command produced an error).
+
+**Root cause:** both jobs used the same logrotate state file (`/var/lib/logrotate/status`). Logrotate locks this file while running, so the second job exited without doing anything. Which job won was random — a **race condition**.
+
+**Fix:** give the job its own state file:
+
+```
+*/2 * * * * root /usr/sbin/logrotate -s /var/lib/logrotate/time-api.status /etc/logrotate.d/time-api
+```
+
+The syslog excerpt is saved in [`proof/cron_race_condition.txt`](proof/cron_race_condition.txt).
+
+## How to reproduce (Ubuntu 24.04)
+
+```bash
+# 1. App and dependencies
+sudo mkdir -p /opt/time-api && sudo chown $USER:$USER /opt/time-api
+cp app/app.py app/requirements.txt /opt/time-api/
+python3 -m venv /opt/time-api/venv
+/opt/time-api/venv/bin/pip install -r /opt/time-api/requirements.txt
+
+# 2. Logs and systemd service
+sudo mkdir -p /var/log/time-api
+sudo cp systemd/time-api.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now time-api
+
+# 3. Rotation and schedule
+sudo cp logrotate/time-api /etc/logrotate.d/
+sudo cp cron/time-api-logrotate /etc/cron.d/
+```
+
+## Verification
+
+```bash
+curl http://localhost:8080/time    # → access.log
+curl http://localhost:8080/error   # → error.log
+
+# generate > 500 KB of logs, then wait up to 2 minutes
+for i in $(seq 1 15000); do curl -s http://localhost:8080/time > /dev/null; done
+
+ls -lh /var/log/time-api              # archives .1, .2 ... max 4 files per log
+cat /var/log/time-api-rotations.log   # one timestamp per rotation
+```
+
+Real output is saved in [`proof/`](proof/).

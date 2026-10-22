@@ -1,0 +1,1 @@
+*/2 * * * * root /usr/sbin/logrotate -s /var/lib/logrotate/time-api.status /etc/logrotate.d/time-api

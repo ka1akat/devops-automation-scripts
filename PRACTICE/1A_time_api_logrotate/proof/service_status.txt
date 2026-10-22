@@ -1,0 +1,11 @@
+● time-api.service - Time API
+     Loaded: loaded (/etc/systemd/system/time-api.service; enabled; preset: enabled)
+     Active: active (running) since Thu 2026-10-22 07:01:31 UTC; 49min ago
+   Main PID: 2084 (python)
+      Tasks: 1 (limit: 4392)
+     Memory: 19.3M (max: 150.0M available: 130.6M peak: 20.5M)
+        CPU: 8.568s
+     CGroup: /system.slice/time-api.service
+             └─2084 /opt/time-api/venv/bin/python /opt/time-api/app.py
+
+Oct 22 07:01:31 vagrant systemd[1]: Started time-api.service - Time API.

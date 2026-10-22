@@ -1,0 +1,21 @@
+[Unit]
+Description=Time API
+After=network.target
+
+[Service]
+User=vagrant
+WorkingDirectory=/opt/time-api
+ExecStart=/opt/time-api/venv/bin/python /opt/time-api/app.py
+Environment=PYTHONUNBUFFERED=1
+
+StandardOutput=append:/var/log/time-api/access.log
+StandardError=append:/var/log/time-api/error.log
+
+Restart=always
+RestartSec=3
+
+MemoryMax=150M
+CPUQuota=30%
+
+[Install]
+WantedBy=multi-user.target
