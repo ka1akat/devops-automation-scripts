@@ -1,0 +1,5 @@
+# Vault data and logs are created at runtime — never commit them
+t/vault/file/*
+t/vault/logs/*
+!t/vault/file/.gitkeep
+!t/vault/logs/.gitkeep
