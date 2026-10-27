@@ -1,0 +1,6 @@
+[Unit]
+Description=Rotate PostgreSQL container logs
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/logrotate --state /var/lib/logrotate/postgresql-docker.status /etc/postgresql-docker/postgresql-logrotate.conf
