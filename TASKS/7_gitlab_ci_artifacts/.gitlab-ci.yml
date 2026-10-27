@@ -1,0 +1,16 @@
+stages:
+  - build
+  - test
+
+build_job:
+  stage: build
+  script:
+    - echo "Build complete" > build_output.txt
+  artifacts:
+    paths:
+      - build_output.txt
+  
+test_job:
+  stage: test
+  script:
+    - cat build_output.txt
