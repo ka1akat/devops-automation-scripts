@@ -1,0 +1,23 @@
+stages:
+  - build
+  - test
+  - deploy
+
+build_job:
+  stage: build
+  script:
+    - echo "Build complete" > build_output.txt
+  artifacts:
+    paths:
+      - build_output.txt
+  
+test_job:
+  stage: test
+  script:
+    - cat build_output.txt
+
+deploy_job:
+  stage: deploy
+  script:
+    - echo "Deploying application to production ..."
+    - echo "This is basic build job"
