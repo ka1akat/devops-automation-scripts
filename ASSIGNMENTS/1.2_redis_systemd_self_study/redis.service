@@ -1,0 +1,14 @@
+[Unit]
+Description=Redis in Docker container
+
+[Service]
+ExecStartPre=-/usr/bin/docker rm -f redis
+ExecStart=/usr/bin/docker run --rm --name redis \
+  -v /srv/redis/data:/data \
+  -p 127.0.0.1:6379:6379 \
+  devopfall2026/redis:7 \
+  redis-server --appendonly yes
+ExecStop=/usr/bin/docker stop --timeout 60 redis
+
+[Install]
+WantedBy=multi-user.target
