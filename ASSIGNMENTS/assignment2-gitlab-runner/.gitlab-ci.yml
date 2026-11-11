@@ -1,0 +1,6 @@
+hello:
+  image: alpine:3.20
+  tags:
+    - karakat-runner
+  script:
+    - echo "[$CI_RUNNER_ID] hello, devops."

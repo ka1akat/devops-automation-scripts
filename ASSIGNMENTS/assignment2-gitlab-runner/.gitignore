@@ -1,0 +1,4 @@
+config.toml
+*.env
+.env
+for_me.sh
