@@ -1,0 +1,55 @@
+name: bluegreen
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: bg_postgres
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is not set}
+      POSTGRES_DB: appdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d appdb"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  api_blue:
+    image: ${BLUE_IMAGE:?BLUE_IMAGE is not set}
+    container_name: api_blue
+    environment:
+      DATABASE_URL: ${BLUE_DATABASE_URL:?BLUE_DATABASE_URL is not set}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  api_green:
+    image: ${GREEN_IMAGE:?GREEN_IMAGE is not set}
+    container_name: api_green
+    environment:
+      DATABASE_URL: ${GREEN_DATABASE_URL:?GREEN_DATABASE_URL is not set}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  router:
+    image: traefik:v3.7
+    container_name: bg_router
+    command:
+      - --entryPoints.web.address=:8080
+      - --providers.file.directory=/etc/traefik/dynamic
+      - --providers.file.watch=true
+      - --log.level=INFO
+    ports:
+      - "8080:8080"
+    volumes:
+      - /opt/bluegreen/traefik:/etc/traefik/dynamic:ro
+    restart: unless-stopped
+
+volumes:
+  pgdata:
