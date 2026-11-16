@@ -1,0 +1,49 @@
+stages:
+  - build
+  - deploy
+  - rollback
+
+variables:
+  APP_DIR: task3-api-blue-green
+  IMAGE_REPO: ka1akat/bluegreen-api
+
+build:
+  stage: build
+  tags: [bluegreen]
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "main"'
+  script:
+    - echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USER" --password-stdin
+    - docker build -t "$IMAGE_REPO:$CI_COMMIT_SHORT_SHA" "$APP_DIR"
+    - docker push "$IMAGE_REPO:$CI_COMMIT_SHORT_SHA"
+    - IMAGE_REF="$(docker inspect --format '{{index .RepoDigests 0}}' "$IMAGE_REPO:$CI_COMMIT_SHORT_SHA")"
+    - echo "Published $IMAGE_REPO:$CI_COMMIT_SHORT_SHA as $IMAGE_REF"
+    - echo "IMAGE_REF=$IMAGE_REF" > build.env
+  artifacts:
+    reports:
+      dotenv: build.env
+
+deploy:
+  stage: deploy
+  tags: [bluegreen]
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "main"'
+  needs: [build]
+  resource_group: production
+  environment:
+    name: production
+    url: http://localhost:8080
+  script:
+    - make -C "$APP_DIR" deploy IMAGE="$IMAGE_REF"
+
+rollback:
+  stage: rollback
+  tags: [bluegreen]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: manual
+      allow_failure: true
+  needs: []
+  resource_group: production
+  script:
+    - make -C "$APP_DIR" rollback
