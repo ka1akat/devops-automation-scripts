@@ -1,0 +1,27 @@
+                                                                QUERY PLAN                                                                 
+-------------------------------------------------------------------------------------------------------------------------------------------
+ Hash Join  (cost=2793.61..5065.12 rows=1 width=16) (actual time=21.734..37.428 rows=1 loops=1)
+   Hash Cond: (m.movie_id = ur.movie_id)
+   ->  Seq Scan on movie m  (cost=2387.12..4471.12 rows=50000 width=16) (actual time=13.560..29.937 rows=99950 loops=1)
+         Filter: (NOT (ANY (movie_id = (hashed SubPlan 1).col1)))
+         Rows Removed by Filter: 50
+         SubPlan 1
+           ->  Seq Scan on reaction r  (cost=0.00..2387.00 rows=47 width=16) (actual time=0.353..13.513 rows=50 loops=1)
+                 Filter: (device_id = 'd0bf83a7-a513-4bc5-8cfe-d56092fa4362'::uuid)
+                 Rows Removed by Filter: 99950
+   ->  Hash  (cost=406.48..406.48 rows=1 width=16) (actual time=2.684..2.686 rows=1 loops=1)
+         Buckets: 1024  Batches: 1  Memory Usage: 9kB
+         ->  Hash Join  (cost=259.01..406.48 rows=1 width=16) (actual time=1.424..2.683 rows=1 loops=1)
+               Hash Cond: ((ur.iin)::text = (u.iin)::text)
+               ->  Seq Scan on user_recommendation ur  (cost=0.00..128.72 rows=4997 width=29) (actual time=0.055..1.045 rows=4958 loops=1)
+                     Filter: (period @> now())
+                     Rows Removed by Filter: 90
+               ->  Hash  (cost=259.00..259.00 rows=1 width=13) (actual time=1.357..1.358 rows=1 loops=1)
+                     Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                     ->  Seq Scan on "user" u  (cost=0.00..259.00 rows=1 width=13) (actual time=0.015..1.347 rows=1 loops=1)
+                           Filter: (device_id = 'd0bf83a7-a513-4bc5-8cfe-d56092fa4362'::uuid)
+                           Rows Removed by Filter: 9999
+ Planning Time: 2.432 ms
+ Execution Time: 38.216 ms
+(23 rows)
+

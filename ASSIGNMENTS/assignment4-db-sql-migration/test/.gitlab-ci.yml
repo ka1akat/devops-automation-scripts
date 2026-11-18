@@ -1,0 +1,23 @@
+validate_test:
+  stage: validate
+  rules:
+    - changes:
+        - test/**/*
+  script:
+    - docker create --name flyway-test-$CI_JOB_ID --network host flyway/flyway -configFiles=/flyway/project/conf/flyway.toml validate
+    - docker cp test/. flyway-test-$CI_JOB_ID:/flyway/project
+    - docker start -a flyway-test-$CI_JOB_ID
+  after_script:
+    - docker rm -f flyway-test-$CI_JOB_ID
+
+migrate_test:
+  stage: migrate
+  rules:
+    - changes:
+        - test/**/*
+  script:
+    - docker create --name flyway-test-$CI_JOB_ID --network host flyway/flyway -configFiles=/flyway/project/conf/flyway.toml migrate
+    - docker cp test/. flyway-test-$CI_JOB_ID:/flyway/project
+    - docker start -a flyway-test-$CI_JOB_ID
+  after_script:
+    - docker rm -f flyway-test-$CI_JOB_ID

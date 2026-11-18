@@ -1,0 +1,32 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: movies_pg
+    environment:
+      POSTGRES_USER: movies_admin
+      POSTGRES_PASSWORD: movies_pass
+      POSTGRES_DB: movies_prod
+    ports:
+      - "5432:5432"
+    volumes:
+      - movies_pgdata:/var/lib/postgresql/data
+
+  pgbouncer:
+    image: edoburu/pgbouncer
+    container_name: movies_pgbouncer
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: movies_admin
+      DB_PASSWORD: movies_pass
+      AUTH_TYPE: scram-sha-256
+      POOL_MODE: transaction
+      MAX_CLIENT_CONN: 1000
+      DEFAULT_POOL_SIZE: 20
+    ports:
+      - "6432:5432"
+    depends_on:
+      - postgres
+
+volumes:
+  movies_pgdata:

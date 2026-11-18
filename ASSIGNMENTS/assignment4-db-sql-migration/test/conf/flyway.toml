@@ -1,0 +1,12 @@
+[environments.test]
+url = "jdbc:postgresql://localhost:5432/movies_test"
+user = "movies_admin"
+password = "movies_pass"
+connectRetries = 10
+
+[flyway]
+environment = "test"
+locations = ["filesystem:/flyway/project/sql"]
+baselineOnMigrate = true
+baselineVersion = "1"
+ignoreMigrationPatterns = ["*:pending"]

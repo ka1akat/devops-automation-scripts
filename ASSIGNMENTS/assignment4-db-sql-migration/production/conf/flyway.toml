@@ -1,0 +1,12 @@
+[environments.production]
+url = "jdbc:postgresql://localhost:5432/movies_prod"
+user = "movies_admin"
+password = "movies_pass"
+connectRetries = 10
+
+[flyway]
+environment = "production"
+locations = ["filesystem:/flyway/project/sql"]
+baselineOnMigrate = true
+baselineVersion = "1"
+ignoreMigrationPatterns = ["*:pending"]

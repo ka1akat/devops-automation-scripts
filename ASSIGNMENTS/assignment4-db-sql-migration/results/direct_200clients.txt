@@ -1,0 +1,3 @@
+pgbench (17.12 (Debian 17.12-1.pgdg13+1))
+pgbench: error: connection to server at "localhost" (::1), port 5432 failed: FATAL:  sorry, too many clients already
+pgbench: error: could not create connection for client 175

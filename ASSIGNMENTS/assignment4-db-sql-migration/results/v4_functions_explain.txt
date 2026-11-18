@@ -1,0 +1,19 @@
+                                                                              QUERY PLAN                                                                               
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Nested Loop Anti Join  (cost=1.40..18.55 rows=1 width=84) (actual time=0.217..0.219 rows=1 loops=1)
+   ->  Nested Loop  (cost=0.98..18.04 rows=1 width=37) (actual time=0.154..0.155 rows=1 loops=1)
+         ->  Nested Loop  (cost=0.57..16.62 rows=1 width=16) (actual time=0.092..0.093 rows=1 loops=1)
+               ->  Index Scan using idx_user_device_id on "user" u  (cost=0.29..8.30 rows=1 width=13) (actual time=0.030..0.031 rows=1 loops=1)
+                     Index Cond: (device_id = 'd0bf83a7-a513-4bc5-8cfe-d56092fa4362'::uuid)
+               ->  Index Scan using idx_user_recommendation_iin on user_recommendation ur  (cost=0.28..8.31 rows=1 width=29) (actual time=0.060..0.061 rows=1 loops=1)
+                     Index Cond: ((iin)::text = (u.iin)::text)
+                     Filter: (period @> now())
+         ->  Index Scan using idx_movie_movie_id on movie m  (cost=0.42..1.41 rows=1 width=37) (actual time=0.060..0.061 rows=1 loops=1)
+               Index Cond: (movie_id = ur.movie_id)
+   ->  Index Only Scan using idx_reaction_device_movie on reaction r  (cost=0.42..0.46 rows=1 width=16) (actual time=0.059..0.059 rows=0 loops=1)
+         Index Cond: ((device_id = 'd0bf83a7-a513-4bc5-8cfe-d56092fa4362'::uuid) AND (movie_id = m.movie_id))
+         Heap Fetches: 0
+ Planning Time: 4.002 ms
+ Execution Time: 0.321 ms
+(15 rows)
+

@@ -1,0 +1,11 @@
+stages:
+  - validate
+  - migrate
+
+include:
+  - local: production/.gitlab-ci.yml
+  - local: test/.gitlab-ci.yml
+
+default:
+  tags:
+    - bluegreen

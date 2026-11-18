@@ -1,0 +1,20 @@
+duration: 15 s
+number of transactions actually processed: 14686
+number of failed transactions: 0 (0.000%)
+latency average = 1.414 ms
+latency stddev = 3.777 ms
+rate limit schedule lag: avg 0.284 (max 20.200) ms
+initial connection time = 257.282 ms
+tps = 995.989930 (without initial connection time)
+SQL script 1: /tmp/bench/by_device.sql
+ - weight: 1 (targets 50.0% of total)
+ - 7279 transactions (49.6% of total, tps = 493.654549)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 1.362 ms
+ - latency stddev = 3.460 ms
+SQL script 2: /tmp/bench/by_user.sql
+ - weight: 1 (targets 50.0% of total)
+ - 7405 transactions (50.4% of total, tps = 502.199743)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 1.466 ms
+ - latency stddev = 4.064 ms

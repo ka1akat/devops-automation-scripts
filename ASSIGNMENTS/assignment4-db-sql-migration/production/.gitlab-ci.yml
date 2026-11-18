@@ -1,0 +1,23 @@
+validate_production:
+  stage: validate
+  rules:
+    - changes:
+        - production/**/*
+  script:
+    - docker create --name flyway-prod-$CI_JOB_ID --network host flyway/flyway -configFiles=/flyway/project/conf/flyway.toml validate
+    - docker cp production/. flyway-prod-$CI_JOB_ID:/flyway/project
+    - docker start -a flyway-prod-$CI_JOB_ID
+  after_script:
+    - docker rm -f flyway-prod-$CI_JOB_ID
+
+migrate_production:
+  stage: migrate
+  rules:
+    - changes:
+        - production/**/*
+  script:
+    - docker create --name flyway-prod-$CI_JOB_ID --network host flyway/flyway -configFiles=/flyway/project/conf/flyway.toml migrate
+    - docker cp production/. flyway-prod-$CI_JOB_ID:/flyway/project
+    - docker start -a flyway-prod-$CI_JOB_ID
+  after_script:
+    - docker rm -f flyway-prod-$CI_JOB_ID

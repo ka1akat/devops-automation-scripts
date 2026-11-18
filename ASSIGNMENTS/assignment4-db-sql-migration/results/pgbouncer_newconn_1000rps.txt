@@ -1,0 +1,27 @@
+pgbench (17.12 (Debian 17.12-1.pgdg13+1))
+transaction type: multiple scripts
+scaling factor: 1
+query mode: simple
+number of clients: 50
+number of threads: 4
+maximum number of tries: 1
+duration: 30 s
+number of transactions actually processed: 24348
+number of failed transactions: 0 (0.000%)
+latency average = 2929.941 ms
+latency stddev = 1639.168 ms
+rate limit schedule lag: avg 2899.146 (max 5992.990) ms
+average connection time = 4.881 ms
+tps = 811.501348 (including reconnection times)
+SQL script 1: /tmp/bench/by_device.sql
+ - weight: 1 (targets 50.0% of total)
+ - 12088 transactions (49.6% of total, tps = 402.884356)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 2930.259 ms
+ - latency stddev = 1647.380 ms
+SQL script 2: /tmp/bench/by_user.sql
+ - weight: 1 (targets 50.0% of total)
+ - 12260 transactions (50.4% of total, tps = 408.616992)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 2929.627 ms
+ - latency stddev = 1631.031 ms
