@@ -29,3 +29,35 @@
 
   Messages are not deleted after reading (they stay until retention expires),
   so the same message can be read again by moving the group's offset back.
+
+ - Read the same message with two consumers and explain the result
+
+  I opened two terminals and ran two consumers at the same time.
+
+  **Case 1: both consumers in the same group**
+
+      docker exec -it broker01 kafka-console-consumer --bootstrap-server localhost:9092 --topic saturday-again --group group-shared --from-beginning
+
+  The message appeared in only one terminal. The topic has one partition, and inside one group
+  a partition can be read by only one consumer, so the second consumer got no partition and stayed idle.
+  Checked with:
+
+      docker exec -it broker01 kafka-consumer-groups --bootstrap-server localhost:9092 --describe --group group-shared --members
+
+  **Case 2: consumers in different groups**
+
+      docker exec -it broker01 kafka-console-consumer --bootstrap-server localhost:9092 --topic saturday-again --group group-x --from-beginning
+      docker exec -it broker01 kafka-console-consumer --bootstrap-server localhost:9092 --topic saturday-again --group group-y --from-beginning
+
+  The message appeared in both terminals. Each group has its own committed offset,
+  so different groups read the topic independently and each one gets every message.
+  `--describe --group group-x` shows CURRENT-OFFSET 1, LOG-END-OFFSET 1, LAG 0.
+
+  **Answer:** within one consumer group a message is processed by only one consumer
+  (consumers share the partitions). Different consumer groups each receive all messages.
+  Adding more consumers than partitions to a group does not help: the extra consumers stay idle.
+
+  - Delete the topic 
+
+      docker exec -it broker01 kafka-topics --bootstrap-server localhost:9092 --delete --topic saturday-again
+      docker exec -it broker01 kafka-topics --bootstrap-server localhost:9092 --list
