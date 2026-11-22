@@ -1,0 +1,138 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+
+     execution: local
+        script: /bench/load.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 1000 max VUs, 1m0s max duration (incl. graceful stop):
+              * load: 10000.00 iterations/s for 30s (maxVUs: 200-1000, gracefulStop: 30s)
+
+
+running (0m01.0s), 0708/0710 VUs, 1848 complete and 0 interrupted iterations
+load   [   3% ] 0708/0710 VUs  01.0s/30s  10000.00 iters/s
+time="2026-11-22T12:14:18Z" level=warning msg="Insufficient VUs, reached 1000 active VUs and cannot initialize more" executor=constant-arrival-rate scenario=load
+
+running (0m02.0s), 0998/1000 VUs, 3608 complete and 0 interrupted iterations
+load   [   7% ] 0998/1000 VUs  02.0s/30s  10000.00 iters/s
+
+running (0m03.0s), 1000/1000 VUs, 6242 complete and 0 interrupted iterations
+load   [  10% ] 1000/1000 VUs  03.0s/30s  10000.00 iters/s
+
+running (0m04.0s), 1000/1000 VUs, 8865 complete and 0 interrupted iterations
+load   [  13% ] 1000/1000 VUs  04.0s/30s  10000.00 iters/s
+
+running (0m05.0s), 1000/1000 VUs, 11461 complete and 0 interrupted iterations
+load   [  17% ] 1000/1000 VUs  05.0s/30s  10000.00 iters/s
+
+running (0m06.0s), 0999/1000 VUs, 14243 complete and 0 interrupted iterations
+load   [  20% ] 0999/1000 VUs  06.0s/30s  10000.00 iters/s
+
+running (0m07.0s), 0997/1000 VUs, 16869 complete and 0 interrupted iterations
+load   [  23% ] 0997/1000 VUs  07.0s/30s  10000.00 iters/s
+
+running (0m08.0s), 1000/1000 VUs, 19499 complete and 0 interrupted iterations
+load   [  27% ] 1000/1000 VUs  08.0s/30s  10000.00 iters/s
+
+running (0m09.0s), 1000/1000 VUs, 22187 complete and 0 interrupted iterations
+load   [  30% ] 1000/1000 VUs  09.0s/30s  10000.00 iters/s
+
+running (0m10.0s), 1000/1000 VUs, 24728 complete and 0 interrupted iterations
+load   [  33% ] 1000/1000 VUs  10.0s/30s  10000.00 iters/s
+
+running (0m11.0s), 1000/1000 VUs, 26953 complete and 0 interrupted iterations
+load   [  37% ] 1000/1000 VUs  11.0s/30s  10000.00 iters/s
+
+running (0m12.0s), 0999/1000 VUs, 29157 complete and 0 interrupted iterations
+load   [  40% ] 0999/1000 VUs  12.0s/30s  10000.00 iters/s
+
+running (0m13.0s), 0999/1000 VUs, 31737 complete and 0 interrupted iterations
+load   [  43% ] 0999/1000 VUs  13.0s/30s  10000.00 iters/s
+
+running (0m14.0s), 0989/1000 VUs, 34273 complete and 0 interrupted iterations
+load   [  47% ] 0989/1000 VUs  14.0s/30s  10000.00 iters/s
+
+running (0m15.0s), 0996/1000 VUs, 36635 complete and 0 interrupted iterations
+load   [  50% ] 0996/1000 VUs  15.0s/30s  10000.00 iters/s
+
+running (0m16.0s), 0999/1000 VUs, 38843 complete and 0 interrupted iterations
+load   [  53% ] 0999/1000 VUs  16.0s/30s  10000.00 iters/s
+
+running (0m17.0s), 0994/1000 VUs, 41025 complete and 0 interrupted iterations
+load   [  57% ] 0994/1000 VUs  17.0s/30s  10000.00 iters/s
+
+running (0m18.0s), 0999/1000 VUs, 43591 complete and 0 interrupted iterations
+load   [  60% ] 0999/1000 VUs  18.0s/30s  10000.00 iters/s
+
+running (0m19.0s), 1000/1000 VUs, 45275 complete and 0 interrupted iterations
+load   [  63% ] 1000/1000 VUs  19.0s/30s  10000.00 iters/s
+
+running (0m20.0s), 0999/1000 VUs, 47364 complete and 0 interrupted iterations
+load   [  67% ] 0999/1000 VUs  20.0s/30s  10000.00 iters/s
+
+running (0m21.0s), 1000/1000 VUs, 49708 complete and 0 interrupted iterations
+load   [  70% ] 1000/1000 VUs  21.0s/30s  10000.00 iters/s
+
+running (0m22.0s), 0933/1000 VUs, 51821 complete and 0 interrupted iterations
+load   [  73% ] 0933/1000 VUs  22.0s/30s  10000.00 iters/s
+
+running (0m23.0s), 1000/1000 VUs, 54540 complete and 0 interrupted iterations
+load   [  77% ] 1000/1000 VUs  23.0s/30s  10000.00 iters/s
+
+running (0m24.0s), 0998/1000 VUs, 57173 complete and 0 interrupted iterations
+load   [  80% ] 0998/1000 VUs  24.0s/30s  10000.00 iters/s
+
+running (0m25.0s), 0999/1000 VUs, 59794 complete and 0 interrupted iterations
+load   [  83% ] 0999/1000 VUs  25.0s/30s  10000.00 iters/s
+
+running (0m26.0s), 1000/1000 VUs, 62427 complete and 0 interrupted iterations
+load   [  87% ] 1000/1000 VUs  26.0s/30s  10000.00 iters/s
+
+running (0m27.0s), 1000/1000 VUs, 64987 complete and 0 interrupted iterations
+load   [  90% ] 1000/1000 VUs  27.0s/30s  10000.00 iters/s
+
+running (0m28.0s), 0997/1000 VUs, 67401 complete and 0 interrupted iterations
+load   [  93% ] 0997/1000 VUs  28.0s/30s  10000.00 iters/s
+
+running (0m29.0s), 1000/1000 VUs, 69454 complete and 0 interrupted iterations
+load   [  97% ] 1000/1000 VUs  29.0s/30s  10000.00 iters/s
+
+running (0m30.0s), 1000/1000 VUs, 71515 complete and 0 interrupted iterations
+load   [ 100% ] 1000/1000 VUs  30.0s/30s  10000.00 iters/s
+
+
+  █ TOTAL RESULTS 
+
+    checks_total.......: 72548   2396.308805/s
+    checks_succeeded...: 100.00% 72548 out of 72548
+    checks_failed......: 0.00%   0 out of 72548
+
+    ✓ status is 200
+
+    HTTP
+    http_req_duration..............: avg=405.42ms med=326.51ms p(95)=1.19s p(99)=1.92s max=5.8s
+      { expected_response:true }...: avg=405.42ms med=326.51ms p(95)=1.19s p(99)=1.92s max=5.8s
+    http_req_failed................: 0.00%  0 out of 72548
+    http_reqs......................: 72548  2396.308805/s
+
+    EXECUTION
+    dropped_iterations.............: 227453 7512.924225/s
+    iteration_duration.............: avg=405.6ms  med=326.66ms p(95)=1.19s p(99)=1.92s max=5.8s
+    iterations.....................: 72548  2396.308805/s
+    vus............................: 1000   min=708        max=1000
+    vus_max........................: 1000   min=711        max=1000
+
+    NETWORK
+    data_received..................: 14 MB  465 kB/s
+    data_sent......................: 9.8 MB 322 kB/s
+
+
+
+
+running (0m30.3s), 0000/1000 VUs, 72548 complete and 0 interrupted iterations
+load ✓ [ 100% ] 0000/1000 VUs  30s  10000.00 iters/s

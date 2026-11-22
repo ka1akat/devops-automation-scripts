@@ -1,0 +1,26 @@
+13:21:45 copy user: shard0 -> shard2: 1717 rows
+13:21:45 copy user: shard0 -> shard1: 1711 rows
+13:21:45 copy user: shard1 -> shard2: 1720 rows
+13:21:45 copy user: shard1 -> shard0: 1559 rows
+13:21:46 copy user_recommendation: shard0 -> shard2: 831 rows
+13:21:46 copy user_recommendation: shard0 -> shard1: 847 rows
+13:21:46 copy user_recommendation: shard1 -> shard2: 885 rows
+13:21:46 copy user_recommendation: shard1 -> shard0: 794 rows
+13:21:46 copy reaction: shard0 -> shard2: 16645 rows
+13:21:46 copy reaction: shard0 -> shard1: 17678 rows
+13:21:46 copy reaction: shard1 -> shard0: 15129 rows
+13:21:46 copy reaction: shard1 -> shard2: 16051 rows
+13:21:47 catchup reactions written on shard0 since 2026-11-22 13:21:45.885787: 6 new rows copied
+13:21:47 catchup reactions written on shard1 since 2026-11-22 13:21:45.885787: 2 new rows copied
+13:21:47 routing switched to 3 shards
+13:21:52 catchup reactions written on shard0 since 2026-11-22 13:21:45.885787: 0 new rows copied
+13:21:52 catchup reactions written on shard1 since 2026-11-22 13:21:45.885787: 1 new rows copied
+13:21:53 cleanup user on shard0: DELETE 3428
+13:21:53 cleanup user on shard1: DELETE 3279
+13:21:53 cleanup user_recommendation on shard0: DELETE 1678
+13:21:53 cleanup user_recommendation on shard1: DELETE 1679
+13:21:53 cleanup reaction on shard0: DELETE 34329
+13:21:53 cleanup reaction on shard1: DELETE 31183
+13:21:54 shard0: users=3213 reactions=33396
+13:21:54 shard1: users=3350 reactions=34299
+13:21:54 shard2: users=3437 reactions=32720

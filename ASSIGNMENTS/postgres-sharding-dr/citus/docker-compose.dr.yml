@@ -1,0 +1,114 @@
+# Disaster recovery on top of docker-compose.yml:
+# WAL archiving to the backup site + async streaming replica for every node.
+
+services:
+  coordinator:
+    command:
+      - postgres
+      - -c
+      - shared_preload_libraries=citus
+      - -c
+      - wal_log_hints=on
+      - -c
+      - archive_mode=on
+      - -c
+      - archive_timeout=300
+      - -c
+      - archive_command=test ! -f /backup/coordinator/wal/%f.gz && gzip -c %p > /backup/coordinator/wal/%f.gz
+    volumes:
+      - backup_site:/backup
+
+  worker1:
+    command:
+      - postgres
+      - -c
+      - shared_preload_libraries=citus
+      - -c
+      - wal_log_hints=on
+      - -c
+      - archive_mode=on
+      - -c
+      - archive_timeout=300
+      - -c
+      - archive_command=test ! -f /backup/worker1/wal/%f.gz && gzip -c %p > /backup/worker1/wal/%f.gz
+    volumes:
+      - backup_site:/backup
+
+  worker2:
+    command:
+      - postgres
+      - -c
+      - shared_preload_libraries=citus
+      - -c
+      - wal_log_hints=on
+      - -c
+      - archive_mode=on
+      - -c
+      - archive_timeout=300
+      - -c
+      - archive_command=test ! -f /backup/worker2/wal/%f.gz && gzip -c %p > /backup/worker2/wal/%f.gz
+    volumes:
+      - backup_site:/backup
+
+  pgbouncer:
+    environment:
+      DB_HOST: ${COORD_HOST:-coordinator}
+
+  coordinator_replica:
+    image: citus-arm:13.2
+    container_name: citus_coordinator_replica
+    user: postgres
+    volumes:
+      - coordinator_replica_data:/var/lib/postgresql/data
+      - backup_site:/backup
+    command:
+      - bash
+      - -c
+      - |
+        [ -s "$$PGDATA/PG_VERSION" ] || pg_basebackup -h coordinator -U movies_admin -D "$$PGDATA" -R -X stream
+        chmod 700 "$$PGDATA"
+        exec postgres -c shared_preload_libraries=citus -c wal_log_hints=on -c archive_mode=on -c archive_timeout=300 -c 'archive_command=test ! -f /backup/coordinator/wal/%f.gz && gzip -c %p > /backup/coordinator/wal/%f.gz'
+    depends_on:
+      - coordinator
+
+  worker1_replica:
+    image: citus-arm:13.2
+    container_name: citus_worker1_replica
+    user: postgres
+    volumes:
+      - worker1_replica_data:/var/lib/postgresql/data
+      - backup_site:/backup
+    command:
+      - bash
+      - -c
+      - |
+        [ -s "$$PGDATA/PG_VERSION" ] || pg_basebackup -h worker1 -U movies_admin -D "$$PGDATA" -R -X stream
+        chmod 700 "$$PGDATA"
+        exec postgres -c shared_preload_libraries=citus -c wal_log_hints=on -c archive_mode=on -c archive_timeout=300 -c 'archive_command=test ! -f /backup/worker1/wal/%f.gz && gzip -c %p > /backup/worker1/wal/%f.gz'
+    depends_on:
+      - worker1
+
+  worker2_replica:
+    image: citus-arm:13.2
+    container_name: citus_worker2_replica
+    user: postgres
+    volumes:
+      - worker2_replica_data:/var/lib/postgresql/data
+      - backup_site:/backup
+    command:
+      - bash
+      - -c
+      - |
+        [ -s "$$PGDATA/PG_VERSION" ] || pg_basebackup -h worker2 -U movies_admin -D "$$PGDATA" -R -X stream
+        chmod 700 "$$PGDATA"
+        exec postgres -c shared_preload_libraries=citus -c wal_log_hints=on -c archive_mode=on -c archive_timeout=300 -c 'archive_command=test ! -f /backup/worker2/wal/%f.gz && gzip -c %p > /backup/worker2/wal/%f.gz'
+    depends_on:
+      - worker2
+
+volumes:
+  coordinator_replica_data:
+  worker1_replica_data:
+  worker2_replica_data:
+  backup_site:
+    name: dr_backup_site
+    external: true

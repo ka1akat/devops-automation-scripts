@@ -1,0 +1,67 @@
+services:
+  coordinator:
+    image: citus-arm:13.2
+    container_name: citus_coordinator
+    environment:
+      POSTGRES_USER: movies_admin
+      POSTGRES_PASSWORD: movies_pass
+      POSTGRES_DB: movies
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - coordinator_data:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d:ro
+
+  worker1:
+    image: citus-arm:13.2
+    container_name: citus_worker1
+    environment:
+      POSTGRES_USER: movies_admin
+      POSTGRES_PASSWORD: movies_pass
+      POSTGRES_DB: movies
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - worker1_data:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d:ro
+
+  worker2:
+    image: citus-arm:13.2
+    container_name: citus_worker2
+    environment:
+      POSTGRES_USER: movies_admin
+      POSTGRES_PASSWORD: movies_pass
+      POSTGRES_DB: movies
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - worker2_data:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d:ro
+
+  pgbouncer:
+    image: edoburu/pgbouncer
+    container_name: citus_pgbouncer
+    environment:
+      DB_HOST: coordinator
+      DB_PORT: 5432
+      DB_USER: movies_admin
+      DB_PASSWORD: movies_pass
+      AUTH_TYPE: scram-sha-256
+      POOL_MODE: transaction
+      MAX_CLIENT_CONN: 1000
+      DEFAULT_POOL_SIZE: 20
+    ports:
+      - "6440:5432"
+    depends_on:
+      - coordinator
+  api:
+    build: ../api
+    container_name: citus_api
+    network_mode: host
+    environment:
+      MODE: citus
+      PORT: 8001
+      DSNS: postgresql://movies_admin:movies_pass@127.0.0.1:6440/movies
+    depends_on:
+      - pgbouncer
+volumes:
+  coordinator_data:
+  worker1_data:
+  worker2_data:

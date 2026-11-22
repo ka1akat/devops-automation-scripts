@@ -1,0 +1,50 @@
+=== 1. JOINS ===
+--- co-located join by user_id + reference table movie: WORKS
+ genre | recommendations 
+-------+-----------------
+ Drama |            5008
+(1 row)
+
+--- join by iin (not the distribution column): REJECTED by Citus (limitation)
+=== 2. UNIQUE IDS ===
+ERROR:  the query contains a join that requires repartitioning
+HINT:  Set citus.enable_repartition_joins to on to enable repartitioning
+ users | distinct_ids 
+-------+--------------
+ 10000 |        10000
+(1 row)
+
+INSERT 0 1
+             new_user_id              | nodename 
+--------------------------------------+----------
+ 134fec63-5647-4f1f-9575-2b0c361b2b94 | worker1
+(1 row)
+
+=== 3. TRANSACTIONS ACROSS TWO WORKERS ===
+u1 (worker1) = eca7aa28-0553-4105-80dd-0592eff582fd
+u2 (worker2) = dc249947-30d6-4c23-b00b-a8e6cd7de1f4
+--- 3a. second insert breaks CHECK -> whole transaction rolled back on BOTH workers
+BEGIN
+INSERT 0 1
+ERROR:  new row for relation "reaction_102074" violates check constraint "reaction_reaction_type_check"
+DETAIL:  Failing row contains (dc249947-30d6-4c23-b00b-a8e6cd7de1f4, null, null, WRONG, 2000-01-01 00:00:00).
+CONTEXT:  while executing command on worker2:5432
+ROLLBACK
+ demo_rows_after_failed_tx 
+---------------------------
+                         0
+(1 row)
+
+--- 3b. both inserts valid -> committed on BOTH workers (two-phase commit)
+BEGIN
+INSERT 0 1
+INSERT 0 1
+COMMIT
+ demo_rows_after_ok_tx 
+-----------------------
+                     2
+(1 row)
+
+--- cleanup demo rows
+DELETE 2
+DELETE 1

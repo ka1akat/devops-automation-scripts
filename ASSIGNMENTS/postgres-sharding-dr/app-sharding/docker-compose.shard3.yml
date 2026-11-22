@@ -1,0 +1,40 @@
+# Task 3: third shard + routing file for the API
+services:
+  shard2:
+    image: postgres:17
+    container_name: app_shard2
+    environment:
+      POSTGRES_USER: movies_admin
+      POSTGRES_PASSWORD: movies_pass
+      POSTGRES_DB: movies
+    volumes:
+      - shard2_data:/var/lib/postgresql/data
+      - ./sql/01_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ../common/sql/V3__add_indexes.sql:/docker-entrypoint-initdb.d/02_indexes.sql:ro
+      - ../common/sql/V4__optimize_recommendation_functions.sql:/docker-entrypoint-initdb.d/03_functions.sql:ro
+
+  pgbouncer2:
+    image: edoburu/pgbouncer
+    container_name: app_pgbouncer2
+    environment:
+      DB_HOST: shard2
+      DB_PORT: 5432
+      DB_USER: movies_admin
+      DB_PASSWORD: movies_pass
+      AUTH_TYPE: scram-sha-256
+      POOL_MODE: transaction
+      MAX_CLIENT_CONN: 1000
+      DEFAULT_POOL_SIZE: 20
+    ports:
+      - "6443:5432"
+    depends_on:
+      - shard2
+
+  api:
+    environment:
+      ROUTING_FILE: /config/routing.json
+    volumes:
+      - ./routing:/config:ro
+
+volumes:
+  shard2_data:

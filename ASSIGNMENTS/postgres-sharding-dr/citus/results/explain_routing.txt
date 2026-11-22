@@ -1,0 +1,43 @@
+                                                        QUERY PLAN                                                        
+--------------------------------------------------------------------------------------------------------------------------
+ Custom Scan (Citus Adaptive)
+   Task Count: 1
+   Tasks Shown: All
+   ->  Task
+         Node: host=worker1 port=5432 dbname=movies
+         ->  Nested Loop Anti Join
+               ->  Nested Loop
+                     ->  Nested Loop
+                           ->  Seq Scan on user_102009 u
+                                 Filter: (user_id = 'eca7aa28-0553-4105-80dd-0592eff582fd'::uuid)
+                           ->  Seq Scan on user_recommendation_102041 ur
+                                 Filter: ((user_id = 'eca7aa28-0553-4105-80dd-0592eff582fd'::uuid) AND (period @> now()))
+                     ->  Index Scan using idx_movie_movie_id_102008 on movie_102008 m
+                           Index Cond: (movie_id = ur.movie_id)
+               ->  Index Only Scan using idx_reaction_user_movie_102073 on reaction_102073 r
+                     Index Cond: ((user_id = 'eca7aa28-0553-4105-80dd-0592eff582fd'::uuid) AND (movie_id = m.movie_id))
+(16 rows)
+
+                                                        QUERY PLAN                                                        
+--------------------------------------------------------------------------------------------------------------------------
+ Custom Scan (Citus Adaptive)
+   Task Count: 32
+   Tasks Shown: One of 32
+   ->  Task
+         Node: host=worker1 port=5432 dbname=movies
+         ->  Nested Loop Anti Join
+               Join Filter: (r.user_id = u.user_id)
+               ->  Nested Loop
+                     ->  Hash Join
+                           Hash Cond: (ur.user_id = u.user_id)
+                           ->  Seq Scan on user_recommendation_102041 ur
+                                 Filter: (period @> now())
+                           ->  Hash
+                                 ->  Seq Scan on user_102009 u
+                                       Filter: (device_id = '8dd3c9ab-5c5a-4f6c-8dbd-66380dee00ed'::uuid)
+                     ->  Index Scan using idx_movie_movie_id_102008 on movie_102008 m
+                           Index Cond: (movie_id = ur.movie_id)
+               ->  Index Scan using idx_reaction_device_movie_102073 on reaction_102073 r
+                     Index Cond: ((device_id = '8dd3c9ab-5c5a-4f6c-8dbd-66380dee00ed'::uuid) AND (movie_id = m.movie_id))
+(19 rows)
+

@@ -1,0 +1,56 @@
+--- BEFORE: shards of "user" per worker
+ nodename | shards 
+----------+--------
+ worker1  |     16
+ worker2  |     16
+(2 rows)
+
+          add_node_at          
+-------------------------------
+ 2026-11-22 13:03:56.423585+00
+(1 row)
+
+ citus_add_node 
+----------------
+              4
+(1 row)
+
+      rebalance_start_at       
+-------------------------------
+ 2026-11-22 13:03:56.493202+00
+(1 row)
+
+NOTICE:  Scheduled 10 moves as job 1
+DETAIL:  Rebalance scheduled as background job
+HINT:  To monitor progress, run: SELECT * FROM citus_rebalance_status();
+ citus_rebalance_start 
+-----------------------
+                     1
+(1 row)
+
+ citus_rebalance_wait 
+----------------------
+ 
+(1 row)
+
+       rebalance_done_at       
+-------------------------------
+ 2026-11-22 13:04:01.525958+00
+(1 row)
+
+--- AFTER: shards of "user" per worker
+ nodename | shards 
+----------+--------
+ worker1  |     11
+ worker2  |     11
+ worker3  |     10
+(3 rows)
+
+--- AFTER: users per worker
+ nodename | users 
+----------+-------
+ worker1  |  3401
+ worker2  |  3461
+ worker3  |  3138
+(3 rows)
+

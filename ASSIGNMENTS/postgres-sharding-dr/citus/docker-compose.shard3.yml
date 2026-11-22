@@ -1,0 +1,16 @@
+# Task 3: third worker
+services:
+  worker3:
+    image: citus-arm:13.2
+    container_name: citus_worker3
+    environment:
+      POSTGRES_USER: movies_admin
+      POSTGRES_PASSWORD: movies_pass
+      POSTGRES_DB: movies
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - worker3_data:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d:ro
+
+volumes:
+  worker3_data:
