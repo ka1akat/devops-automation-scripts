@@ -6,6 +6,11 @@ Every folder has its own README: the task, the solution, how to run it and how i
 ## Assignments
 
 - [Assignment 1 - PostgreSQL in Docker managed by systemd](ASSIGNMENTS/1_postgresql_systemd) - systemd service for a Docker container: startup dependencies, automatic recovery, non-root user, health checks with a timer, log files and daily log rotation
+- [Assignment 2 - GitLab Runner](ASSIGNMENTS/assignment2-gitlab-runner) - self-hosted GitLab Runner in Docker: registration, a GitLab CI pipeline, Makefile for setup and cleanup
+- [Assignment 3 - API blue-green deployment](ASSIGNMENTS/assignment3-api-blue-green) - FastAPI + PostgreSQL app deployed with a GitLab CI pipeline and Docker Hub using a blue-green strategy (two versions, switching traffic with no downtime)
+- [Assignment 4 - SQL optimization and Flyway migrations](ASSIGNMENTS/assignment4-db-sql-migration) - optimizing PostgreSQL functions (indexes, PgBouncer), load testing at 1000 / 10000 RPS, Flyway migrations for production and test with GitLab CI validate and migrate stages
+- [Assignment 5 - PostgreSQL sharding and disaster recovery](ASSIGNMENTS/postgres-sharding-dr) - sharding with Citus and at the app level, disaster recovery, adding a new shard
+- [Self-study - Redis managed by systemd](ASSIGNMENTS/1.2_redis_systemd_self_study) - my own extra practice: Redis in Docker with a Dockerfile and a basic redis.service
 
 ## Tasks
 
